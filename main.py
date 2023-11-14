@@ -66,6 +66,21 @@ def check_balance(call):
     answer_user(call.message, f'Проверяю баланс для ссылки '
                               f'{call.message.text.split()[-1]}')
 
+    chek_user = chek_exist_user(call.message.chat.id)
+
+
+def chek_exist_user(user_id) -> list:
+    try:
+        with open(user_id, 'r', encoding='utf-8') as file:
+            body_file = file.readlines()
+            return [True, body_file]
+    except FileNotFoundError:
+        print('Это новый пользователь - создаё файл для него.')
+        with open(user_id, 'x', encoding='utf-8') as file:
+            pass
+    except PermissionError:
+        print('Ошибка: недостаточно прав для чтения файла.')
+        return [False, 0]
 
 
 def parsing(msg) -> list:
