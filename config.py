@@ -26,3 +26,9 @@ WRONG_PARSING = ('Что-то не так с ссылкой, я не могу е
 
 VV_CLASS_PRODUCT = 'Product__title js-datalayer-catalog-list-name'
 VV_CLASS_PRICE = 'Price__value'
+
+F_PAYS = 'Pays/'
+F_TASKS = 'Tasks/'
+
+SUM_PAY = 100.00
+FORMAT_DATETIME = '%Y.%m.%d--%H-%M-%S'
