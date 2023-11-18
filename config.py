@@ -23,12 +23,14 @@ WELCOME_MSG = ('Вы запустили бота по парсингу сайт�
 WRONG_URL = 'Ссылка должна начинаться с https://vkusvill.ru'
 WRONG_PARSING = ('Что-то не так с ссылкой, я не могу её корректно обработать, '
                  'прощу прощения.')
+ER_PERMISSION = 'Ошибка: недостаточно прав для чтения файла.'
 
 VV_CLASS_PRODUCT = 'Product__title js-datalayer-catalog-list-name'
 VV_CLASS_PRICE = 'Price__value'
 
 F_PAYS = 'Pays/'
 F_TASKS = 'Tasks/'
+F_PARSING = 'Parsing results/'
 
 SUM_PAY = 100.00
 FORMAT_DATETIME = '%Y.%m.%d--%H-%M-%S'
