@@ -1,4 +1,5 @@
 import telebot
+
 from telebot import types
 
 import warnings
@@ -6,6 +7,8 @@ import warnings
 warnings.filterwarnings('ignore')
 
 import requests
+from requests import ConnectTimeout
+
 from bs4 import BeautifulSoup
 from datetime import datetime
 
@@ -42,7 +45,7 @@ def url_message(message):
     else:
         bot.send_message(message.chat.id, 'Запускаю парсинг ссылки ...')
         product, price, url_product = parsing(message.text)
-        if product == False or price == False:
+        if product == False or price == False or url_product == False:
             answer_user(message, config.WRONG_PARSING)
         else:
             answer_user(message,
@@ -169,12 +172,16 @@ def chek_exist_user(user_id: int) -> bool:
         return False
 
 
-# что за verify=False ???
-# почему лучше писать не requests.get ???
 def parsing(url: str, back_url: bool = True) -> list:
-    response = requests.get(url=url, verify=False)
-    soup = BeautifulSoup(response.text, 'lxml')
+    try:
+        response = requests.request('GET', url=url, verify=False, timeout=10)
+    except ConnectTimeout:
+        if back_url:
+            return [False, False, False]
+        else:
+            return [False, False]
 
+    soup = BeautifulSoup(response.text, 'lxml')
     chek = soup.findAll('body', class_='_detailProdPage')
     if len(chek):
         product = soup.find('h1', class_=config.VV_CLASS_PRODUCT)
@@ -183,7 +190,11 @@ def parsing(url: str, back_url: bool = True) -> list:
             return [product.text.strip(), price.text.strip(), url]
         else:
             return [product.text.strip(), price.text.strip()]
-    return [False, False]
+
+    if back_url:
+        return [False, False, False]
+    else:
+        return [False, False]
 
 
 def database_update() -> bool:
@@ -194,7 +205,7 @@ def database_update() -> bool:
         for url in all_url:
             print(f'- парсю ссылку {url.strip()} из спика ссылок {all_url}')
             product, price = parsing(url.strip(), False)
-            time.sleep(1)
+            time.sleep(3)
             current_date = datetime.now().strftime(config.FORMAT_DATETIME)
             if product and price:
                 brutto_url += f'{current_date} {product} {price}\n'
@@ -234,7 +245,7 @@ def time_broker():
         print('Обновляю цены ...')
         database_update()
         print('Обновление завершено!')
-        time.sleep(3)
+        time.sleep(15)
 
 
 if __name__ == '__main__':
