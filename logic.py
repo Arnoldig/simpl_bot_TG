@@ -156,35 +156,26 @@ def check_exist_user(user_id: int) -> bool:
         return False
 
 
-def parsing(url: str, back_url: bool = True) -> list:
+def parsing(url: str,) -> tuple:
     """
     Функция для получения данных по товару с сайта ВВ.
     :param url: адрес карточки товара на сайте ВВ.
-    :param back_url: необходимость возврата url
     :return: True - если функция отработала корректно, иначе False
     """
     try:
         response = request('GET', url=url, verify=False, timeout=15)
     except ConnectTimeout:
-        if back_url:
-            return [False, False, False]
-        else:
-            return [False, False]
+        return (False,)
 
     soup = BeautifulSoup(response.text, 'lxml')
     check = soup.findAll('body', class_=config.VV_CLASS_PRODUCT_Page)
     if len(check):
         product = soup.find('h1', class_=config.VV_CLASS_PRODUCT)
         price = soup.find('span', class_=config.VV_CLASS_PRICE)
-        if back_url:
-            return [product.text.strip(), price.text.strip(), url]
-        else:
-            return [product.text.strip(), price.text.strip()]
+        return (product.text.strip(), price.text.strip())
 
-    if back_url:
-        return [False, False, False]
-    else:
-        return [False, False]
+    return (False,)
+
 
 
 def database_update() -> bool:
@@ -199,8 +190,8 @@ def database_update() -> bool:
 
         for url in all_url:
             print(f'- парсю ссылку {url.strip()} из спика ссылок {all_url}')
-            product, price = parsing(url.strip(), False)
             sleep(15)
+            product, price = parsing(url.strip())
             current_date = datetime.now().strftime(config.FORMAT_DATETIME)
             if product and price:
                 brutto_url += f'{current_date} {product} {price}\n'
