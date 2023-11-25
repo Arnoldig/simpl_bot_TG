@@ -6,13 +6,14 @@ from os import listdir
 
 from requests import ConnectTimeout
 from requests import request
+from telebot import types
 from bs4 import BeautifulSoup
 
 import main
 import config
 
 
-def check_balance(call) -> bool:
+def check_balance(call: types.CallbackQuery) -> bool:
     """
     Функция проверяет баланс пользователя. Если баланаса недостаточно -
     то запускает функционал для его пополнения. В противном случае
@@ -35,9 +36,8 @@ def check_balance(call) -> bool:
         add_task(call.message.chat.id, call.message.text.split()[-1])
         print('Ссылка добавлена в файл для парсинга')
         main.answer_user(call.message, 'Мониторинг товара запущен!')
-        return True
 
-    return False
+    return check_sum
 
 
 def add_task(user_id: int, url: str) -> bool:
@@ -172,7 +172,7 @@ def parsing(url: str, back_url: bool = True) -> list:
             return [False, False]
 
     soup = BeautifulSoup(response.text, 'lxml')
-    check = soup.findAll('body', class_='_detailProdPage')
+    check = soup.findAll('body', class_=config.VV_CLASS_PRODUCT_Page)
     if len(check):
         product = soup.find('h1', class_=config.VV_CLASS_PRODUCT)
         price = soup.find('span', class_=config.VV_CLASS_PRICE)
@@ -263,7 +263,7 @@ def time_broker() -> None:
         sleep(3600)  # каждый час обновляем данные
 
 
-def turn_on_time_broker():
+def turn_on_time_broker() -> None:
     try:
         print('Включил тайм-брокер.')
         thread = Thread(target=time_broker)

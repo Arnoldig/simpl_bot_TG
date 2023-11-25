@@ -6,6 +6,7 @@ filterwarnings('ignore')
 
 from telebot import TeleBot
 from telebot import types
+from requests import ReadTimeout
 
 import config
 import token_tg
@@ -14,7 +15,8 @@ import logic
 bot = TeleBot(token_tg.TOKEN)
 
 
-def answer_user(msg, answer: str, button_yes_no: bool = False) -> None:
+def answer_user(msg: types.Message, answer: str,
+                button_yes_no: bool = False) -> None:
     """
     Возвращаем ответ пользователю в чат телеграм
     :param msg: сообщение в чате телеграма
@@ -33,7 +35,7 @@ def answer_user(msg, answer: str, button_yes_no: bool = False) -> None:
 
 
 @bot.message_handler(commands=['start'])
-def hello_new_user(message) -> None:
+def hello_new_user(message: types.Message) -> None:
     """
     Приветствуем нового пользователя
     :param message: сообщение в чате телеграма
@@ -43,7 +45,7 @@ def hello_new_user(message) -> None:
 
 
 @bot.message_handler(content_types=['text'])
-def url_message(message) -> None:
+def url_message(message: types.Message) -> None:
     """
     Функция анализирует сообщение пользователя на корректность ссылки
     :param message: сообщение в чате телеграма
@@ -65,7 +67,7 @@ def url_message(message) -> None:
 
 
 @bot.callback_query_handler(func=lambda call: True)
-def get_offer(call) -> None:
+def get_offer(call: types.CallbackQuery) -> None:
     """
     Функция обрабатывает ответ пользователя через кнопки под сообщением
     :param call: нажатые кнопки вместе с сообщением из чата телеграм
@@ -78,11 +80,11 @@ def get_offer(call) -> None:
         answer_user(call.message, 'Если передумаете - нажмите Да.')
 
 
-def turn_on_bot():
+def turn_on_bot() -> None:
     try:
         print('Включил телеграм бота.')
         bot.infinity_polling()
-    except Exception as e:
+    except (ConnectionError, ReadTimeout) as e:
         current_date = datetime.now().strftime(config.FORMAT_DATETIME)
         print(f'Произошёл сбой в работе Телеграм бота!\n'
               f'- время сбоая {current_date};\n'

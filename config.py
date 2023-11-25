@@ -27,6 +27,7 @@ ER_PERMISSION = 'Ошибка: недостаточно прав для чтен
 
 VV_CLASS_PRODUCT = 'Product__title js-datalayer-catalog-list-name'
 VV_CLASS_PRICE = 'Price__value'
+VV_CLASS_PRODUCT_Page = '_detailProdPage'
 
 F_PAYS = 'Pays/'
 F_TASKS = 'Tasks/'
