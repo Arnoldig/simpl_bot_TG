@@ -172,16 +172,16 @@ def parsing(url: str, ) -> tuple:
               f'- ошибка {e};\n'
               f'Перезапущу парсинг через 5 сек.')
         sleep(5)
-        return (False,)
+        return False, False
 
     soup = BeautifulSoup(response.text, 'lxml')
     check = soup.findAll('body', class_=config.VV_CLASS_PRODUCT_Page)
     if len(check):
         product = soup.find('h1', class_=config.VV_CLASS_PRODUCT)
         price = soup.find('span', class_=config.VV_CLASS_PRICE)
-        return (product.text.strip(), price.text.strip())
+        return product.text.strip(), price.text.strip()
 
-    return (False,)
+    return False, False
 
 
 def database_update() -> bool:
@@ -253,13 +253,12 @@ def time_broker() -> None:
     :return: функция ничего не возвращает
     """
     while True:
-        sleep(3)  # ожидаем запуска телеграм бота
+        sleep(3600)  # ожидаем запуска телеграм бота
         current_date = datetime.now().strftime(config.FORMAT_DATETIME)
         print(f'Приступил к обновлению цен в {current_date}')
         database_update()
         current_date = datetime.now().strftime(config.FORMAT_DATETIME)
         print(f'Обновление цен завершено в {current_date}')
-        sleep(3600)  # каждый час обновляем данные
 
 
 def turn_on_time_broker() -> None:

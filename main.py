@@ -57,7 +57,7 @@ def url_message(message: types.Message) -> None:
         bot.send_message(message.chat.id, 'Запускаю парсинг ссылки ...')
         product, price = logic.parsing(message.text)
         url_product = message.text.strip()
-        if (product or price or url_product) is False:
+        if (product and price and url_product) is False:
             answer_user(message, config.WRONG_PARSING)
         else:
             answer_user(message,
