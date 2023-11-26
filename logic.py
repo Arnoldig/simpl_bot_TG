@@ -9,6 +9,7 @@ from requests import ReadTimeout
 from requests import request
 from telebot import types
 from bs4 import BeautifulSoup
+from urllib3.exceptions import ReadTimeoutError
 
 import main
 import config
@@ -165,7 +166,7 @@ def parsing(url: str, ) -> tuple:
     """
     try:
         response = request('GET', url=url, verify=False, timeout=15)
-    except (ConnectTimeout, ReadTimeout) as e:
+    except (ConnectTimeout, ReadTimeout, ReadTimeoutError) as e:
         current_date = datetime.now().strftime(config.FORMAT_DATETIME)
         print(f'Произошёл сбой в парсинге сайта!\n'
               f'- время сбоая {current_date};\n'
