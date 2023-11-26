@@ -195,7 +195,7 @@ def database_update() -> bool:
         brutto_url = ''
 
         for url in all_url:
-            print(f'- парсю ссылку {url.strip()} из спика ссылок {all_url}')
+            print(f'- обрабатываю ссылку {url.strip()}')
             sleep(15)
             product, price = parsing(url.strip())
             current_date = datetime.now().strftime(config.FORMAT_DATETIME)
@@ -254,9 +254,11 @@ def time_broker() -> None:
     """
     while True:
         sleep(3)  # ожидаем запуска телеграм бота
-        print('Обновляю цены ...')
+        current_date = datetime.now().strftime(config.FORMAT_DATETIME)
+        print(f'Приступил к обновлению цен в {current_date}')
         database_update()
-        print('Обновление цен завершено!')
+        current_date = datetime.now().strftime(config.FORMAT_DATETIME)
+        print(f'Обновление цен завершено в {current_date}')
         sleep(3600)  # каждый час обновляем данные
 
 
