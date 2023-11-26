@@ -166,7 +166,8 @@ def parsing(url: str, ) -> tuple:
     """
     try:
         response = request('GET', url=url, verify=False, timeout=15)
-    except (ConnectTimeout, ReadTimeout, ReadTimeoutError) as e:
+    except (ConnectTimeout, ReadTimeout, ReadTimeoutError,
+            ConnectionError) as e:
         current_date = datetime.now().strftime(config.FORMAT_DATETIME)
         print(f'Произошёл сбой в парсинге сайта!\n'
               f'- время сбоая {current_date};\n'
