@@ -5,6 +5,7 @@ from time import sleep
 from os import listdir
 
 from requests import ConnectTimeout
+from requests import ReadTimeout
 from requests import request
 from telebot import types
 from bs4 import BeautifulSoup
@@ -156,7 +157,7 @@ def check_exist_user(user_id: int) -> bool:
         return False
 
 
-def parsing(url: str,) -> tuple:
+def parsing(url: str, ) -> tuple:
     """
     Функция для получения данных по товару с сайта ВВ.
     :param url: адрес карточки товара на сайте ВВ.
@@ -164,7 +165,13 @@ def parsing(url: str,) -> tuple:
     """
     try:
         response = request('GET', url=url, verify=False, timeout=15)
-    except ConnectTimeout:
+    except (ConnectTimeout, ReadTimeout) as e:
+        current_date = datetime.now().strftime(config.FORMAT_DATETIME)
+        print(f'Произошёл сбой в парсинге сайта!\n'
+              f'- время сбоая {current_date};\n'
+              f'- ошибка {e};\n'
+              f'Перезапущу парсинг через 5 сек.')
+        sleep(5)
         return (False,)
 
     soup = BeautifulSoup(response.text, 'lxml')
@@ -175,7 +182,6 @@ def parsing(url: str,) -> tuple:
         return (product.text.strip(), price.text.strip())
 
     return (False,)
-
 
 
 def database_update() -> bool:

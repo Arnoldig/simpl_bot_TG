@@ -84,10 +84,10 @@ def turn_on_bot() -> None:
     try:
         print('Включил телеграм бота.')
         bot.infinity_polling()
-    except (ConnectionError, ReadTimeout) as e:
+    except ConnectionError as e:
         current_date = datetime.now().strftime(config.FORMAT_DATETIME)
         print(f'Произошёл сбой в работе Телеграм бота!\n'
-              f'- время сбоая {current_date};\n'
+              f'- время сбоя {current_date};\n'
               f'- ошибка {e};\n'
               f'Перезапущу бота через 5 сек.')
         sleep(5)
