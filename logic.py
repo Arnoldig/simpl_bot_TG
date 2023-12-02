@@ -4,12 +4,9 @@ from typing import Union
 from time import sleep
 from os import listdir
 
-from requests import ConnectTimeout
-from requests import ReadTimeout
 from requests import request
 from telebot import types
 from bs4 import BeautifulSoup
-from urllib3.exceptions import ReadTimeoutError
 
 import main
 import config
@@ -166,8 +163,7 @@ def parsing(url: str, ) -> tuple:
     """
     try:
         response = request('GET', url=url, verify=False, timeout=15)
-    except (ConnectTimeout, ReadTimeout, ReadTimeoutError,
-            ConnectionError) as e:
+    except Exception as e:
         current_date = datetime.now().strftime(config.FORMAT_DATETIME)
         print(f'Произошёл сбой в парсинге сайта!\n'
               f'- время сбоая {current_date};\n'
@@ -181,7 +177,8 @@ def parsing(url: str, ) -> tuple:
     if len(check):
         product = soup.find('h1', class_=config.VV_CLASS_PRODUCT)
         price = soup.find('span', class_=config.VV_CLASS_PRICE)
-        return product.text.strip(), price.text.strip()
+        if product is not None and price is not None:
+            return product.text.strip(), price.text.strip()
 
     return False, False
 

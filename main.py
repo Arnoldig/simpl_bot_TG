@@ -6,7 +6,6 @@ filterwarnings('ignore')
 
 from telebot import TeleBot
 from telebot import types
-from requests import ReadTimeout
 
 import config
 import token_tg
@@ -84,7 +83,7 @@ def turn_on_bot() -> None:
     try:
         print('Включил телеграм бота.')
         bot.infinity_polling()
-    except ConnectionError as e:
+    except Exception as e:
         current_date = datetime.now().strftime(config.FORMAT_DATETIME)
         print(f'Произошёл сбой в работе Телеграм бота!\n'
               f'- время сбоя {current_date};\n'
@@ -94,7 +93,6 @@ def turn_on_bot() -> None:
 
 
 if __name__ == '__main__':
-    while True:
-        logic.turn_on_time_broker()
-        turn_on_bot()
-        print('Телеграм бот отключен!')
+    logic.turn_on_time_broker()
+    turn_on_bot()
+    print('Телеграм бот отключен!')
